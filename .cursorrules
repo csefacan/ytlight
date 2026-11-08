@@ -1,0 +1,23 @@
+# Project Rules & Architecture Constraints
+
+1. **Zero Bloat & Ultra-Low RAM:** 
+   - NEVER use Electron. 
+   - NEVER render the actual `music.youtube.com` web page for playback. 
+   - Only stream raw audio (Opus/AAC) directly via native/lightweight audio decoders.
+   - Avoid heavy UI animations, canvas visualizers, waveforms, blur/acrylic overuse, or high-res background video loops. Target idle RAM usage under 50-80 MB and active playback under 120 MB.
+
+2. **Native Windows 10/11 Integration:**
+   - Implement Windows System Media Transport Controls (SMTC) so hardware media keys (Play, Pause, Next, Previous) and the Windows volume flyout work natively.
+   - Implement System Tray (Notification Area) minimize/close behavior with a lightweight context menu.
+
+3. **YouTube InnerTube API & Brand Account (Channel) Isolation:**
+   - Use YouTube Music's internal InnerTube API (`https://music.youtube.com/youtubei/v1/...`) for all data fetching and mutations.
+   - Support Google Cookie / Session authentication (`SAPISIDHASH` authorization header).
+   - **CRITICAL:** Support YouTube Brand Accounts / Multiple Channels under a single Google login. Fetch available profiles via InnerTube `account/accounts_list` endpoint and pass the selected profile's `X-Goog-PageId` (or `datasyncId` / `onBehalfOfUser`) header in EVERY API request so playlists, library, recommendations, and watch history are strictly isolated to the selected YouTube channel/profile.
+
+4. **True Playback History Sync:**
+   - Do not just play the audio URL. Extract playback tracking URLs (`videostatsPlaybackUrl` and `videostatsWatchtimeUrl` from the InnerTube `/player` response) and send periodic pings (`/api/stats/playback` and `/api/stats/watchtime`) with the active profile's auth headers so YouTube Music accurately records listening history and updates personalized algorithms.
+
+5. **Code Quality:**
+   - Write complete, production-ready code. Do not leave `// TODO` placeholders for core logic.
+   - Ensure aggressive memory cleanup (dispose audio buffers, clear image caches when minimized to tray).

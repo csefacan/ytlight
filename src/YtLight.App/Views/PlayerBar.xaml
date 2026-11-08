@@ -1,0 +1,111 @@
+<UserControl x:Class="YtLight.App.Views.PlayerBar"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Border Background="{StaticResource SurfaceBrush}" BorderBrush="{StaticResource BorderBrush}" BorderThickness="0,1,0,0" Padding="14,6" Height="82">
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="260"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="260"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- Sol: Şarkı Bilgisi & Kapak -->
+            <Grid Grid.Column="0" VerticalAlignment="Center">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Border Width="48" Height="48" CornerRadius="6" Background="{StaticResource SurfaceAltBrush}" Margin="0,0,10,0">
+                    <Grid>
+                        <TextBlock Text="🎵" FontSize="20" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="{StaticResource MutedBrush}"/>
+                        <Image Source="{Binding CurrentTrack.ThumbnailUrl}" Stretch="UniformToFill"/>
+                    </Grid>
+                </Border>
+                <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                    <TextBlock Text="{Binding CurrentTrack.Title, FallbackValue='Şarkı seçilmedi'}"
+                               FontWeight="SemiBold" FontSize="13" TextTrimming="CharacterEllipsis"
+                               ToolTip="{Binding CurrentTrack.Title}"/>
+                    <TextBlock Text="{Binding CurrentTrack.Artists}"
+                               Foreground="{StaticResource MutedBrush}" FontSize="11" Margin="0,2,0,0"
+                               TextTrimming="CharacterEllipsis" ToolTip="{Binding CurrentTrack.Artists}"/>
+                </StackPanel>
+            </Grid>
+
+            <!-- Orta: Müzik Kontrolleri (Büyük Play Butonu ve Sağı/Solu) + İlerleme Çubuğu -->
+            <StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="12,0">
+                <!-- Üst: Buton Grubu -->
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+                    <!-- Sol Kontroller: Karışık Çal & Önceki -->
+                    <Button Style="{StaticResource CircleGhostButton}" Content="🔀" Command="{Binding ToggleShuffleCommand}"
+                            Width="32" Height="32" FontSize="13" ToolTip="Karışık Çal" Margin="0,0,4,0"/>
+                    <Button Style="{StaticResource CircleGhostButton}" Content="⏮" Command="{Binding PreviousCommand}"
+                            Width="36" Height="36" FontSize="16" ToolTip="Önceki Şarkı"/>
+
+                    <!-- ORTA: BÜYÜK OYNATMA BUTONU -->
+                    <Button Style="{StaticResource CirclePlayButton}"
+                            Content="{Binding IsPlaying, Converter={StaticResource PlayLabelConverter}}"
+                            Command="{Binding PlayPauseCommand}"
+                            ToolTip="Oynat / Duraklat"
+                            Margin="12,0"/>
+
+                    <!-- Sağ Kontroller: Sonraki, Tekrar, Beğen, Beğenme -->
+                    <Button Style="{StaticResource CircleGhostButton}" Content="⏭" Command="{Binding NextCommand}"
+                            Width="36" Height="36" FontSize="16" ToolTip="Sonraki Şarkı"/>
+                    <Button Style="{StaticResource CircleGhostButton}" Content="{Binding RepeatIcon}" Command="{Binding CycleRepeatCommand}"
+                            Width="32" Height="32" FontSize="14" ToolTip="{Binding RepeatLabel}" Margin="4,0,0,0"/>
+
+                    <Border Width="1" Height="16" Background="{StaticResource BorderBrush}" Margin="8,0,8,0" VerticalAlignment="Center"/>
+
+                    <Button Style="{StaticResource CircleGhostButton}" Content="❤" Command="{Binding LikeCommand}"
+                            Width="30" Height="30" FontSize="13" ToolTip="Beğen"/>
+                    <Button Style="{StaticResource CircleGhostButton}" Content="👎" Command="{Binding DislikeCommand}"
+                            Width="30" Height="30" FontSize="12" ToolTip="Beğenme"/>
+                </StackPanel>
+
+                <!-- Alt: Seek Bar & Süre -->
+                <Grid Margin="0,4,0,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="42"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="42"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Text="{Binding PositionText}" FontSize="11" Foreground="{StaticResource MutedBrush}"
+                               HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                    <Slider x:Name="Seek" Grid.Column="1" Minimum="0" Maximum="{Binding DurationSeconds}"
+                            Value="{Binding PositionSeconds, Mode=OneWay}"
+                            Margin="8,0" VerticalAlignment="Center"
+                            PreviewMouseLeftButtonUp="OnSeek"/>
+                    <TextBlock Grid.Column="2" Text="{Binding DurationText}" FontSize="11" Foreground="{StaticResource MutedBrush}"
+                               HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                </Grid>
+            </StackPanel>
+
+            <!-- Sağ: Ses & Uyku Modu & Sıra -->
+            <StackPanel Grid.Column="2" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
+                <Button Style="{StaticResource CircleGhostButton}" Content="{Binding IsMuted, Converter={StaticResource MuteLabelConverter}}"
+                        Command="{Binding ToggleMuteCommand}" Width="32" Height="32" FontSize="14" ToolTip="Sesi Aç / Kapat"/>
+                <Slider Width="85" Minimum="0" Maximum="1" Value="{Binding Volume, Mode=TwoWay}"
+                        VerticalAlignment="Center" Margin="4,0,10,0"/>
+
+                <Button Style="{StaticResource GhostButton}" Content="{Binding SleepLabel}" Click="OnSleepClick"
+                        Padding="6,4" FontSize="11" ToolTip="Uyku Zamanlayıcısı" Margin="0,0,4,0">
+                    <Button.ContextMenu>
+                        <ContextMenu>
+                            <MenuItem Header="Kapat" Command="{Binding StartSleepCommand}" CommandParameter="off"/>
+                            <MenuItem Header="15 dakika" Command="{Binding StartSleepCommand}" CommandParameter="15"/>
+                            <MenuItem Header="30 dakika" Command="{Binding StartSleepCommand}" CommandParameter="30"/>
+                            <MenuItem Header="45 dakika" Command="{Binding StartSleepCommand}" CommandParameter="45"/>
+                            <MenuItem Header="60 dakika" Command="{Binding StartSleepCommand}" CommandParameter="60"/>
+                            <MenuItem Header="Şarkı bittiğinde" Command="{Binding StartSleepCommand}" CommandParameter="end"/>
+                            <Separator/>
+                            <MenuItem Header="Bitince uygulamayı kapat" IsCheckable="True" IsChecked="{Binding ExitAppWhenDone}"/>
+                        </ContextMenu>
+                    </Button.ContextMenu>
+                </Button>
+
+                <Button Style="{StaticResource GhostButton}" Content="Sıra" Command="{Binding ToggleQueueCommand}"
+                        Padding="8,4" FontSize="11" ToolTip="Çalma Sırasını Aç/Kapat"/>
+            </StackPanel>
+        </Grid>
+    </Border>
+</UserControl>

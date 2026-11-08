@@ -1,0 +1,7 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <RootNamespace>YtLight.Core</RootNamespace>
+    <Description>Shared models and contracts for the YtLight YouTube Music client.</Description>
+  </PropertyGroup>
+</Project>

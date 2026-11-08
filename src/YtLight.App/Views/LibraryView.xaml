@@ -1,0 +1,81 @@
+<UserControl x:Class="YtLight.App.Views.LibraryView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:models="clr-namespace:YtLight.Core.Models;assembly=YtLight.Core">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="280"/>
+            <ColumnDefinition Width="1"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <DockPanel Grid.Column="0" Margin="8">
+            <DockPanel DockPanel.Dock="Top" Margin="4,0,4,8">
+                <Button DockPanel.Dock="Right" Style="{StaticResource GhostButton}" Content="+ Yeni Liste" Click="OnCreatePlaylistClick" Padding="6,2" FontSize="11"/>
+                <TextBlock Text="Çalma listeleri" FontWeight="SemiBold" VerticalAlignment="Center"/>
+            </DockPanel>
+            <ListBox ItemsSource="{Binding Playlists}"
+                     SelectedItem="{Binding SelectedPlaylist}">
+                <ListBox.ItemTemplate>
+                    <DataTemplate DataType="{x:Type models:PlaylistSummary}">
+                        <DockPanel>
+                            <TextBlock DockPanel.Dock="Right" Text="{Binding TrackCount}" Foreground="{StaticResource MutedBrush}" Margin="8,0,0,0"/>
+                            <TextBlock Text="{Binding Title}" TextTrimming="CharacterEllipsis"/>
+                        </DockPanel>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+        </DockPanel>
+
+        <Rectangle Grid.Column="1" Fill="{StaticResource BorderBrush}"/>
+
+        <DockPanel Grid.Column="2" Margin="8">
+            <TextBlock DockPanel.Dock="Top" Text="{Binding Status}" Foreground="{StaticResource MutedBrush}" Margin="4,0,4,8"/>
+            <Grid DockPanel.Dock="Top" Margin="0,0,0,6">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <TextBlock Text="Kaydedilen albümler" FontWeight="SemiBold" Margin="0,0,0,6"/>
+                <ListBox Grid.Row="1" ItemsSource="{Binding Albums}" SelectedItem="{Binding SelectedAlbum}"
+                         ScrollViewer.HorizontalScrollBarVisibility="Disabled" MaxHeight="130"
+                         PreviewMouseLeftButtonUp="OnAlbumClick">
+                    <ListBox.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <WrapPanel Orientation="Horizontal"/>
+                        </ItemsPanelTemplate>
+                    </ListBox.ItemsPanel>
+                    <ListBox.ItemTemplate>
+                        <DataTemplate DataType="{x:Type models:AlbumSummary}">
+                            <Border Padding="8" Width="120" Margin="0,0,6,6" Background="{StaticResource SurfaceAltBrush}" CornerRadius="8" Cursor="Hand">
+                                <StackPanel>
+                                    <TextBlock Text="{Binding Title}" FontWeight="SemiBold" TextTrimming="CharacterEllipsis"/>
+                                    <TextBlock Text="{Binding Artists}" Foreground="{StaticResource MutedBrush}" FontSize="11" TextTrimming="CharacterEllipsis"/>
+                                </StackPanel>
+                            </Border>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+            </Grid>
+
+            <ListView ItemsSource="{Binding Tracks}" BorderThickness="0" Background="Transparent"
+                      MouseDoubleClick="OnTrackDoubleClick"
+                      PreviewMouseRightButtonDown="OnTrackRightClick">
+                <ListView.View>
+                    <GridView>
+                        <GridViewColumn Header="Şarkı" Width="320" DisplayMemberBinding="{Binding Title}"/>
+                        <GridViewColumn Header="Sanatçı" Width="220" DisplayMemberBinding="{Binding Artists}"/>
+                        <GridViewColumn Header="Süre" Width="70" DisplayMemberBinding="{Binding DurationText}"/>
+                    </GridView>
+                </ListView.View>
+                <ListView.ContextMenu>
+                    <ContextMenu>
+                        <MenuItem Header="Çal" Click="OnPlayTrack"/>
+                        <MenuItem Header="Seçili listeye ekle" Click="OnAddTrack"/>
+                        <MenuItem Header="Bu listeden çıkar" Click="OnRemoveTrack"/>
+                    </ContextMenu>
+                </ListView.ContextMenu>
+            </ListView>
+        </DockPanel>
+    </Grid>
+</UserControl>

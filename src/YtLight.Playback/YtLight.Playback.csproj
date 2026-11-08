@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <RootNamespace>YtLight.Playback</RootNamespace>
+    <Description>Audio engine, loudness, sleep timer, and watch-history reporting.</Description>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\YtLight.Core\YtLight.Core.csproj" />
+    <ProjectReference Include="..\YtLight.InnerTube\YtLight.InnerTube.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Concentus" Version="1.1.7" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="8.0.2" />
+    <PackageReference Include="NAudio" Version="2.2.1" />
+  </ItemGroup>
+</Project>

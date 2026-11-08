@@ -1,0 +1,8 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/YtLight.App/YtLight.App.csproj" />
+    <Project Path="src/YtLight.Core/YtLight.Core.csproj" />
+    <Project Path="src/YtLight.InnerTube/YtLight.InnerTube.csproj" />
+    <Project Path="src/YtLight.Playback/YtLight.Playback.csproj" />
+  </Folder>
+</Solution>

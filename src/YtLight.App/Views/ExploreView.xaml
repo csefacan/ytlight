@@ -1,0 +1,60 @@
+<UserControl x:Class="YtLight.App.Views.ExploreView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:models="clr-namespace:YtLight.Core.Models;assembly=YtLight.Core">
+    <DockPanel Margin="8">
+        <TextBlock DockPanel.Dock="Top" Text="{Binding Status}" Foreground="{StaticResource MutedBrush}" Margin="4,0,4,8"/>
+        <ScrollViewer VerticalScrollBarVisibility="Auto" PreviewMouseWheel="OnPreviewMouseWheel" CanContentScroll="False">
+            <ItemsControl ItemsSource="{Binding Shelves}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate DataType="{x:Type models:HomeShelf}">
+                        <DockPanel Margin="0,0,0,18">
+                            <TextBlock DockPanel.Dock="Top" Text="{Binding Title}" FontWeight="SemiBold" Margin="4,0,0,6"/>
+
+                            <ItemsControl ItemsSource="{Binding Mixes}">
+                                <ItemsControl.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <WrapPanel Orientation="Horizontal"/>
+                                    </ItemsPanelTemplate>
+                                </ItemsControl.ItemsPanel>
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate DataType="{x:Type models:MixSummary}">
+                                        <Border Width="180" Margin="0,0,10,10" Padding="8" Background="{StaticResource SurfaceAltBrush}" CornerRadius="8">
+                                            <StackPanel>
+                                                <TextBlock Text="{Binding Title}" FontWeight="SemiBold" TextTrimming="CharacterEllipsis"/>
+                                                <TextBlock Text="{Binding Subtitle}" Foreground="{StaticResource MutedBrush}" FontSize="11" TextTrimming="CharacterEllipsis"/>
+                                            </StackPanel>
+                                        </Border>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+
+                            <ListBox Margin="0,10,0,0" ItemsSource="{Binding Tracks}"
+                                     PreviewMouseLeftButtonUp="OnTrackSingleClick"
+                                     PreviewMouseRightButtonDown="OnTrackRightClick"
+                                     PreviewMouseWheel="OnPreviewMouseWheel">
+                                <ListBox.ItemTemplate>
+                                    <DataTemplate DataType="{x:Type models:Track}">
+                                        <DockPanel Cursor="Hand">
+                                            <TextBlock DockPanel.Dock="Right" Text="{Binding DurationText}" Foreground="{StaticResource MutedBrush}"/>
+                                            <StackPanel>
+                                                <TextBlock Text="{Binding Title}" TextTrimming="CharacterEllipsis"/>
+                                                <TextBlock Text="{Binding Artists}" Foreground="{StaticResource MutedBrush}" FontSize="12"/>
+                                            </StackPanel>
+                                        </DockPanel>
+                                    </DataTemplate>
+                                </ListBox.ItemTemplate>
+                                <ListBox.ContextMenu>
+                                    <ContextMenu>
+                                        <MenuItem Header="Çal" Click="OnPlayClicked"/>
+                                        <MenuItem Header="Seçili listeye ekle" Click="OnAddClicked"/>
+                                    </ContextMenu>
+                                </ListBox.ContextMenu>
+                            </ListBox>
+                        </DockPanel>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </ScrollViewer>
+    </DockPanel>
+</UserControl>
